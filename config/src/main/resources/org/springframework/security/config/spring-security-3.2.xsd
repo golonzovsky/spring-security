@@ -2297,6 +2297,11 @@
                 </xs:documentation>
          </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="preload" type="xs:boolean">
+          <xs:annotation>
+              <xs:documentation>Specifies if preload token should be included. Default true.</xs:documentation>
+          </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="max-age-seconds" type="xs:integer">
          <xs:annotation>
             <xs:documentation>Specifies the maximum ammount of time the host should be considered a Known HSTS Host.

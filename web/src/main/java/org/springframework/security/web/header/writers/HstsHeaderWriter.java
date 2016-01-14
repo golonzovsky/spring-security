@@ -29,9 +29,9 @@ import org.springframework.util.Assert;
  * Security (HSTS)</a>.
  *
  * <p>
- * By default the expiration is one year and subdomains will be included. This can be
- * customized using {@link #setMaxAgeInSeconds(long)} and
- * {@link #setIncludeSubDomains(boolean)} respectively.
+ * By default the expiration is one year, subdomains and preload tokens will be included. This can be
+ * customized using {@link #setMaxAgeInSeconds(long)}, {@link #setIncludeSubDomains(boolean)} and
+ * {@link #setPreload(boolean)} respectively.
  * </p>
  *
  * <p>
@@ -61,7 +61,27 @@ public final class HstsHeaderWriter implements HeaderWriter {
 
 	private boolean includeSubDomains;
 
+	private boolean preload;
+
 	private String hstsHeaderValue;
+
+	/**
+	 * Creates a new instance
+	 *
+	 * @param requestMatcher maps to {@link #setRequestMatcher(RequestMatcher)}
+	 * @param maxAgeInSeconds maps to {@link #setMaxAgeInSeconds(long)}
+	 * @param includeSubDomains maps to {@link #setIncludeSubDomains(boolean)}
+	 * @param preload maps to {@link #setIncludeSubDomains(boolean)}
+	 */
+	public HstsHeaderWriter(RequestMatcher requestMatcher, long maxAgeInSeconds,
+			boolean includeSubDomains, boolean preload) {
+		super();
+		this.requestMatcher = requestMatcher;
+		this.maxAgeInSeconds = maxAgeInSeconds;
+		this.includeSubDomains = includeSubDomains;
+		this.preload = preload;
+		updateHstsHeaderValue();
+	}
 
 	/**
 	 * Creates a new instance
@@ -72,11 +92,18 @@ public final class HstsHeaderWriter implements HeaderWriter {
 	 */
 	public HstsHeaderWriter(RequestMatcher requestMatcher, long maxAgeInSeconds,
 			boolean includeSubDomains) {
-		super();
-		this.requestMatcher = requestMatcher;
-		this.maxAgeInSeconds = maxAgeInSeconds;
-		this.includeSubDomains = includeSubDomains;
-		updateHstsHeaderValue();
+		this(requestMatcher, maxAgeInSeconds, includeSubDomains, true);
+	}
+
+	/**
+	 * Creates a new instance
+	 *
+	 * @param maxAgeInSeconds maps to {@link #setMaxAgeInSeconds(long)}
+	 * @param includeSubDomains maps to {@link #setIncludeSubDomains(boolean)}
+	 * @param preload maps to {@link #setIncludeSubDomains(boolean)}
+	 */
+	public HstsHeaderWriter(long maxAgeInSeconds, boolean includeSubDomains, boolean preload) {
+		this(new SecureRequestMatcher(), maxAgeInSeconds, includeSubDomains, preload);
 	}
 
 	/**
@@ -186,10 +213,30 @@ public final class HstsHeaderWriter implements HeaderWriter {
 		updateHstsHeaderValue();
 	}
 
+	/**
+	 * <p>
+	 * If true, preload token should be added. The default is true.
+	 * </p>
+	 *
+	 * <p>
+	 * See <a href="https://www.owasp.org/index.php/HTTP_Strict_Transport_Security">Recommended example</a>
+	 * for additional details.
+	 * </p>
+	 *
+	 * @param preload true to include preload token, else false
+	 */
+	public void setPreload(boolean preload) {
+		this.preload = preload;
+		updateHstsHeaderValue();
+	}
+
 	private void updateHstsHeaderValue() {
 		String headerValue = "max-age=" + maxAgeInSeconds;
 		if (includeSubDomains) {
-			headerValue += " ; includeSubDomains";
+			headerValue += "; includeSubDomains";
+		}
+		if (preload) {
+			headerValue += "; preload";
 		}
 		this.hstsHeaderValue = headerValue;
 	}

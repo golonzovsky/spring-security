@@ -49,7 +49,7 @@ import org.springframework.util.Assert;
  * Pragma: no-cache
  * Expires: 0
  * X-Content-Type-Options: nosniff
- * Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+ * Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
  * X-Frame-Options: DENY
  * X-XSS-Protection: 1; mode=block
  * </pre>
@@ -363,6 +363,23 @@ public class HeadersConfigurer<H extends HttpSecurityBuilder<H>> extends
 		 */
 		public HstsConfig includeSubDomains(boolean includeSubDomains) {
 			writer.setIncludeSubDomains(includeSubDomains);
+			return this;
+		}
+
+		/**
+		 * <p>
+		 * If true, preload token should be added. The default is true.
+		 * </p>
+		 *
+		 * <p>
+		 * See <a href="https://www.owasp.org/index.php/HTTP_Strict_Transport_Security">Recommended example</a>
+		 * for additional details.
+		 * </p>
+		 *
+		 * @param preload true to include subdomains, else false
+		 */
+		public HstsConfig preload(boolean preload) {
+			writer.setPreload(preload);
 			return this;
 		}
 

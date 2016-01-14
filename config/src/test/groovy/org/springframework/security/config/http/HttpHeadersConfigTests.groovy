@@ -29,7 +29,7 @@ import org.springframework.security.web.util.matcher.AnyRequestMatcher
 class HttpHeadersConfigTests extends AbstractHttpConfigTests {
 	def defaultHeaders = ['X-Content-Type-Options':'nosniff',
 								 'X-Frame-Options':'DENY',
-								 'Strict-Transport-Security': 'max-age=31536000 ; includeSubDomains',
+								 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
 								 'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
 								 'Expires' : '0',
 								 'Pragma':'no-cache',
@@ -419,7 +419,7 @@ class HttpHeadersConfigTests extends AbstractHttpConfigTests {
 		when:
 			springSecurityFilterChain.doFilter(new MockHttpServletRequest(secure:true), response, new MockFilterChain())
 		then:
-			assertHeaders(response, ['Strict-Transport-Security': 'max-age=31536000 ; includeSubDomains'])
+			assertHeaders(response, ['Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'])
 	}
 
 	def 'http headers hsts default only invokes on HttpServletRequest.isSecure = true'() {
@@ -442,7 +442,7 @@ class HttpHeadersConfigTests extends AbstractHttpConfigTests {
 		setup:
 			httpAutoConfig {
 				'headers'('defaults-disabled':true) {
-					'hsts'('max-age-seconds':'1','include-subdomains':false, 'request-matcher-ref' : 'matcher')
+					'hsts'('max-age-seconds':'1','include-subdomains':false, 'preload':false, 'request-matcher-ref' : 'matcher')
 				}
 			}
 

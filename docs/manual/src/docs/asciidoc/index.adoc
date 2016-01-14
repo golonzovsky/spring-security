@@ -3505,7 +3505,7 @@ Cache-Control: no-cache, no-store, max-age=0, must-revalidate
 Pragma: no-cache
 Expires: 0
 X-Content-Type-Options: nosniff
-Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 X-Frame-Options: DENY
 X-XSS-Protection: 1; mode=block
 ----
@@ -3769,7 +3769,7 @@ One way for a site to be marked as a HSTS host is to have the host preloaded int
 
 [source]
 ----
-Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 ----
 
 The optional includeSubDomains directive instructs Spring Security that subdomains (i.e. secure.mybank.example.com) should also be treated as an HSTS domain.
@@ -3784,6 +3784,7 @@ As with the other headers, Spring Security adds HSTS by default. You can customi
 	<headers>
 		<hsts
 			include-subdomains="true"
+			preload="true"
 			max-age-seconds="31536000" />
 	</headers>
 </http>
@@ -3804,6 +3805,7 @@ protected void configure(HttpSecurity http) throws Exception {
 	.headers()
 		.httpStrictTransportSecurity()
 			.includeSubdomains(true)
+			.preload(true)
 			.maxAgeSeconds(31536000);
 }
 }
@@ -7136,6 +7138,10 @@ Specifies if Strict-Transport-Security should be disabled. Default false.
 [[nsa-hsts-include-subdomains]]
 * **include-sub-domains**
 Specifies if subdomains should be included. Default true.
+
+[[nsa-hsts-preload]]
+* **preload**
+Specifies if preload token should be included. Default true.
 
 
 [[nsa-hsts-max-age-seconds]]
